@@ -20,7 +20,7 @@ Vue.use(VueRouter)
 Vue.component(HasError.name, HasError)
 Vue.component(AlertError.name, AlertError)
 
-Vue.component('example-component', require('./components/ExampleComponent.vue').default);
+// Vue.component('example-component', require('./components/ExampleComponent.vue').default);
 
 
 const toast = swal.mixin({
@@ -45,11 +45,17 @@ Vue.filter('myDate',function(created){
 });
 
 const routes = [
-    { path: '/dashboard', component: require('./components/DashboardComponent.vue').default},
+
+    { path: '/dashboard', component: require('./components/DashboardComponent').default},
     { path: '/users', component: require('./components/UsersComponent.vue').default},
-    { path: '/roles', component: require('./components/management/RolesComponent.vue').default},
+    { path: '/roles', component: require('./components/management/RolesComponent').default},
 ]
+const router = new VueRouter({
+    mode: 'history',
+    routes // short for `routes: routes`
+})
 
 const app = new Vue({
     el: '#app',
+    router,
 });
