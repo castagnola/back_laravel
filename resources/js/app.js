@@ -20,6 +20,7 @@ Vue.use(VueRouter)
 Vue.component(HasError.name, HasError)
 Vue.component(AlertError.name, AlertError)
 
+Vue.component('example-component', require('./components/ExampleComponent.vue').default);
 
 
 const toast = swal.mixin({
@@ -49,15 +50,6 @@ const routes = [
     { path: '/roles', component: require('./components/management/RolesComponent.vue').default},
 ]
 
-const router = new VueRouter({
-    routes // short for `routes: routes`
-})
-
-// Vue.component('example-component', require('./components/ExampleComponent.vue').default);
-Vue.component('user-modal-component', require('./components/usersModals/UserModalComponent').default);
-
-
 const app = new Vue({
     el: '#app',
-    router
 });
