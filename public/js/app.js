@@ -2006,7 +2006,7 @@ __webpack_require__.r(__webpack_exports__);
         name: '',
         email: '',
         password: '',
-        type: '',
+        type_user: '',
         bio: '',
         photo: ''
       })
@@ -2090,7 +2090,7 @@ __webpack_require__.r(__webpack_exports__);
 
       _this3.users[index].name = res.data.name;
       _this3.users[index].email = res.data.email;
-      _this3.users[index].type = res.data.type;
+      _this3.users[index].type_user = res.data.type_user;
     });
   }
 });
@@ -59117,7 +59117,9 @@ var render = function() {
                       _vm._v(" "),
                       _c("td", [_vm._v(_vm._s(user.email))]),
                       _vm._v(" "),
-                      _c("td", [_vm._v(_vm._s(_vm._f("upText")(user.type)))]),
+                      _c("td", [
+                        _vm._v(_vm._s(_vm._f("upText")(user.type_user)))
+                      ]),
                       _vm._v(" "),
                       _c("td", [
                         _vm._v(
@@ -59375,15 +59377,15 @@ var render = function() {
                               {
                                 name: "model",
                                 rawName: "v-model",
-                                value: _vm.form.type,
-                                expression: "form.type"
+                                value: _vm.form.type_user,
+                                expression: "form.type_user"
                               }
                             ],
                             staticClass: "form-control",
                             class: {
-                              "is-invalid": _vm.form.errors.has("type")
+                              "is-invalid": _vm.form.errors.has("type_user")
                             },
-                            attrs: { name: "type", id: "type" },
+                            attrs: { name: "type_user", id: "type_user" },
                             on: {
                               change: function($event) {
                                 var $$selectedVal = Array.prototype.filter
@@ -59396,7 +59398,7 @@ var render = function() {
                                   })
                                 _vm.$set(
                                   _vm.form,
-                                  "type",
+                                  "type_user",
                                   $event.target.multiple
                                     ? $$selectedVal
                                     : $$selectedVal[0]
@@ -59424,7 +59426,7 @@ var render = function() {
                         ),
                         _vm._v(" "),
                         _c("has-error", {
-                          attrs: { form: _vm.form, field: "type" }
+                          attrs: { form: _vm.form, field: "type_user" }
                         })
                       ],
                       1
@@ -74661,7 +74663,6 @@ var routes = [{
   component: __webpack_require__(/*! ./components/management/RolesComponent */ "./resources/js/components/management/RolesComponent.vue")["default"]
 }];
 var router = new vue_router__WEBPACK_IMPORTED_MODULE_1__["default"]({
-  mode: 'history',
   routes: routes // short for `routes: routes`
 
 });

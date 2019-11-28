@@ -9,7 +9,10 @@ use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
-
+    public function __construct()
+    {
+        $this->middleware('auth:api');
+    }
     /**
      * Display a listing of the resource.
      *
@@ -31,12 +34,14 @@ class UserController extends Controller
         $this->validate($request,[
             'name' => 'required|string|max:191',
             'email' => 'required|string|email|max:191|unique:users',
-            'password' => 'required|string|min:6'
+            'password' => 'required|string|min:6',
+            'type_user' =>'required'
+
         ]);
+
         return User::create([
             'name' => $request['name'],
             'email' => $request['email'],
-            'type' => $request['type'],
             'photo' => empty($request['photo']) ? 'user.png' : $request['photo'] ,
             'status' => 1,
             'password' => Hash::make($request['password']),
@@ -67,9 +72,17 @@ class UserController extends Controller
         $this->validate($request,[
             'name' => 'required|string|max:191',
             'email' => 'required|string|email|max:191|unique:users,email,'.$user->id,
-            'password' => 'sometimes|min:6'
+            'password' => 'sometimes|min:6',
+            'type_user' =>'required'
         ]);
-        $user->update($request->all());
+        $user->update([
+            'name'=>$request->name,
+            'email' => $request->email,
+            'photo' => empty($request['photo']) ? 'user.png' : $request->photo ,
+            'password' => Hash::make($request['password']),
+        ]);
+        $user->type_user = $request->type_user;
+        $user->save();
         return $user;
     }
     /**

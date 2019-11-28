@@ -31,7 +31,7 @@
                                 <td>{{user.id}}</td>
                                 <td>{{user.name}}</td>
                                 <td>{{user.email}}</td>
-                                <td>{{user.type | upText}}</td>
+                                <td>{{user.type_user | upText}}</td>
                                 <td>{{user.status == 1 ? 'Activo' : 'Desactivo'}}</td>
                                 <td>{{user.created_at | myDate}}</td>
 
@@ -93,14 +93,14 @@
 
 
                             <div class="form-group">
-                                <select name="type" v-model="form.type" id="type" class="form-control"
-                                        :class="{ 'is-invalid': form.errors.has('type') }">
+                                <select name="type_user" v-model="form.type_user" id="type_user" class="form-control"
+                                        :class="{ 'is-invalid': form.errors.has('type_user') }">
                                     <option value="">Select User Role</option>
                                     <option value="admin">Admin</option>
                                     <option value="user">Standard User</option>
                                     <option value="author">Author</option>
                                 </select>
-                                <has-error :form="form" field="type"></has-error>
+                                <has-error :form="form" field="type_user"></has-error>
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -131,7 +131,7 @@
                     name: '',
                     email: '',
                     password: '',
-                    type: '',
+                    type_user: '',
                     bio: '',
                     photo: ''
                 })
@@ -214,7 +214,7 @@
                 const index = this.users.findIndex(itemSearch => itemSearch.id === res.data.id)
                 this.users[index].name = res.data.name;
                 this.users[index].email = res.data.email;
-                this.users[index].type = res.data.type;
+                this.users[index].type_user = res.data.type_user;
             })
         }
     }
