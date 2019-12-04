@@ -58,7 +58,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                     <img src="./img/boss.png" class="img-circle elevation-2" alt="">
                 </div>
                 <div class="info">
-                    <a href="#" class="d-block">{{ Auth::user()->name }}</a>
+                    <router-link to="/profile" class="d-block">{{ Auth::user()->name }}</router-link>
                 </div>
             </div>
 

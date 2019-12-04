@@ -54,7 +54,6 @@
         </div>
         <!-- Modal -->
 
-
         <div class="modal fade" id="addUser" tabindex="-1" role="dialog" aria-labelledby="addUserLabel"
              aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered" role="document">
@@ -132,12 +131,14 @@
                     email: '',
                     password: '',
                     type_user: '',
-                    bio: '',
                     photo: ''
                 })
             }
         },
         methods: {
+            /**
+             *
+             */
             createUser() {
                 this.editmode = false;
                 this.form.post('api/user')
@@ -150,6 +151,10 @@
                         toast.fire('Uops!', 'Complete all fields!', 'warning')
                     })
             },
+
+            /**
+             * update informatio user
+             */
             updateUser() {
                 // console.log('Editing data');
                 this.form.put('api/user/' + this.form.id)
@@ -160,9 +165,14 @@
                         vm.$emit('afterUpdate', res);
                     })
                     .catch(() => {
-                        toast.fire('ERROR!', 'There was something wronge.', 'error')
+                        toast.fire('Error!', 'There was something wronge.', 'error')
                     });
             },
+
+            /**
+             * Change status user
+             * @param id
+             */
             deleteUser(id) {
                 swal.fire({
                     title: 'Are you sure?',
@@ -175,41 +185,56 @@
                     // Send request to the server
                     if (result.value) {
                         this.form.delete('api/user/' + id).then(() => {
-                            toast.fire(
-                                'Success!',
-                                'User has been deleted.',
-                                'success'
+                            toast.fire('Success!', 'User has been deleted.', 'success'
                             );
                             vm.$emit('AfterCreate');
                         }).catch(() => {
-                            toast.fire('ERROR!', 'There was something wronge.', 'error')
+                            toast.fire('Error!', 'There was something wronge.', 'error')
                         });
                     }
                 })
             },
+
+            /**
+             * Show and complete user info
+             * @param user
+             */
             editModal(user) {
                 this.editmode = true;
                 this.form.reset();
                 $('#addUser').modal('show');
                 this.form.fill(user);
             },
+
+            /**
+             * Show modal to create new user
+             */
             newModal() {
                 this.editmode = false;
                 this.form.reset();
                 $('#addUser').modal('show');
             },
 
+            /**
+             * Show all users
+             */
             loadUsers() {
                 axios.get("api/user").then(({data}) => (this.users = data.data));
 
             },
 
         },
+
+        /**
+         * Methods first charge
+         */
         created() {
             this.loadUsers();
+
             vm.$on('AfterCreate', () => {
                 this.loadUsers();
             });
+            //event
             vm.$on('afterUpdate', (res) => {
                 const index = this.users.findIndex(itemSearch => itemSearch.id === res.data.id)
                 this.users[index].name = res.data.name;
