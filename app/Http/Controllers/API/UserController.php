@@ -24,7 +24,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        return User::latest()->paginate(5);
+        return User::with('roles')->latest()->paginate(5);
     }
 
     /**
@@ -39,17 +39,20 @@ class UserController extends Controller
             'name' => 'required|string|max:191',
             'email' => 'required|string|email|max:191|unique:users',
             'password' => 'required|string|min:6',
-            'type_user' => 'required'
+            'role_id' => 'required'
 
         ]);
 
-        return User::create([
-            'name' => $request['name'],
-            'email' => $request['email'],
-            'photo' => empty($request['photo']) ? 'user.png' : $request['photo'],
-            'status' => 1,
-            'password' => Hash::make($request['password']),
-        ]);
+        $user = new User();
+        $user->name = $request['name'];
+        $user->email = $request['email'];
+        $user->photo = empty($request['photo']) ? 'user.png' : $request['photo'];
+        $user->role_id = $request['role_id'];
+        $user->password = Hash::make($request['password']);
+        $user->save();
+
+        return $user;
+
     }
 
     /**
@@ -74,7 +77,7 @@ class UserController extends Controller
             'name' => 'required|string|max:191',
             'email' => 'required|string|email|max:191|unique:users,email,' . $user->id,
             'password' => 'sometimes|min:6',
-            'type_user' => 'required'
+            'role_id' => 'required'
         ]);
 
         $currentPhoto = $user->photo;
@@ -82,6 +85,11 @@ class UserController extends Controller
             $name = time() . '.' . explode('/', explode(':', substr($request->photo, 0, strpos($request->photo, ';')))[1])[1];
             file_exists(public_path('img/profile/')) ? true : mkdir(public_path('img/profile/'), 0777, true);
             \Image::make($request->photo)->save(public_path('img/profile/') . $name);
+
+            //verifica si el archivo ya existe y lo remplaza
+            $userPhoto = public_path('img/profile/').$currentPhoto;
+            file_exists($userPhoto) ? @unlink($userPhoto) : null;
+
 
         }
         $user->photo = $name;
@@ -103,7 +111,7 @@ class UserController extends Controller
             'name' => 'required|string|max:191',
             'email' => 'required|string|email|max:191|unique:users,email,' . $user->id,
             'password' => 'sometimes|min:6',
-            'type_user' => 'required'
+            'role_id' => 'required'
         ]);
 
         $user->update([
@@ -113,7 +121,7 @@ class UserController extends Controller
             'password' => Hash::make($request['password']),
         ]);
 
-        $user->type_user = $request->type_user;
+        $user->role_id = $request->role_id;
         $user->save();
         return $user;
     }

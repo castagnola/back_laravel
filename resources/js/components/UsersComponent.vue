@@ -31,7 +31,7 @@
                                 <td>{{user.id}}</td>
                                 <td>{{user.name}}</td>
                                 <td>{{user.email}}</td>
-                                <td>{{user.type_user | upText}}</td>
+                                <td>{{user.roles.description | upText}}</td>
                                 <td>{{user.status == 1 ? 'Activo' : 'Desactivo'}}</td>
                                 <td>{{user.created_at | myDate}}</td>
 
@@ -92,14 +92,14 @@
 
 
                             <div class="form-group">
-                                <select name="type_user" v-model="form.type_user" id="type_user" class="form-control"
-                                        :class="{ 'is-invalid': form.errors.has('type_user') }">
+                                <select name="role_id" v-model="form.role_id" id="role_id" class="form-control"
+                                        :class="{ 'is-invalid': form.errors.has('role_id') }">
                                     <option value="">Select User Role</option>
-                                    <option value="admin">Admin</option>
-                                    <option value="user">Standard User</option>
-                                    <option value="author">Author</option>
+                                    <option value="1">Admin</option>
+                                    <option value="2">Standard User</option>
+                                    <option value="3">Author</option>
                                 </select>
-                                <has-error :form="form" field="type_user"></has-error>
+                                <has-error :form="form" field="role_id"></has-error>
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -130,7 +130,7 @@
                     name: '',
                     email: '',
                     password: '',
-                    type_user: '',
+                    role_id: '',
                     photo: ''
                 })
             }
@@ -147,7 +147,8 @@
                         $('#addUser').modal('hide')
                         toast.fire('Success!', 'User Created in successfully.', 'success');
                     })
-                    .catch(() => {
+                    .catch((er) => {
+
                         toast.fire('Uops!', 'Complete all fields!', 'warning')
                     })
             },
@@ -222,7 +223,6 @@
                 axios.get("api/user").then(({data}) => (this.users = data.data));
 
             },
-
         },
 
         /**
@@ -239,7 +239,7 @@
                 const index = this.users.findIndex(itemSearch => itemSearch.id === res.data.id)
                 this.users[index].name = res.data.name;
                 this.users[index].email = res.data.email;
-                this.users[index].type_user = res.data.type_user;
+                this.users[index].role_id = res.data.role_id;
             })
         }
     }

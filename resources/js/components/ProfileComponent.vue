@@ -17,7 +17,7 @@
                         <h5 class="widget-user-desc text-right">Web Designer</h5>
                     </div>
                     <div class="widget-user-image">
-                        <img class="img-circle" src="" alt="User Avatar">
+                        <img class="img-circle" :src="getProfilePhoto()" alt="User Avatar">
                     </div>
                     <div class="card-footer">
                         <div class="row">
@@ -82,7 +82,7 @@
                             <div class="form-group row">
                                 <label for="inputExperience" class="col-sm-2 col-form-label">Role</label>
                                 <div class="col-sm-10">
-                                    <input v-model="form.type_user" class="form-control" id="inputExperience"
+                                    <input v-model="form.role_id" class="form-control" id="inputExperience"
                                            placeholder="Role" disabled>
                                 </div>
                             </div>
@@ -120,7 +120,7 @@
                     name: '',
                     email: '',
                     password: '',
-                    type_user: '',
+                    role_id: '',
                     photo: ''
                 })
             }
@@ -159,6 +159,14 @@
                 } else {
                     toast.fire('Warning!', 'The File is too long.', 'warning')
                 }
+            },
+            /**
+             * Update Profile Picture Instantly
+             * @param event
+             */
+            getProfilePhoto(){
+                let photo = (this.form.photo.length > 200) ? this.form.photo : "img/profile/"+ this.form.photo;
+                return photo;
             }
         },
 

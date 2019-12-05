@@ -1995,7 +1995,7 @@ __webpack_require__.r(__webpack_exports__);
         name: '',
         email: '',
         password: '',
-        type_user: '',
+        role_id: '',
         photo: ''
       })
     };
@@ -2034,6 +2034,15 @@ __webpack_require__.r(__webpack_exports__);
       } else {
         toast.fire('Warning!', 'The File is too long.', 'warning');
       }
+    },
+
+    /**
+     * Update Profile Picture Instantly
+     * @param event
+     */
+    getProfilePhoto: function getProfilePhoto() {
+      var photo = this.form.photo.length > 200 ? this.form.photo : "img/profile/" + this.form.photo;
+      return photo;
     }
   },
 
@@ -2191,7 +2200,7 @@ __webpack_require__.r(__webpack_exports__);
         name: '',
         email: '',
         password: '',
-        type_user: '',
+        role_id: '',
         photo: ''
       })
     };
@@ -2206,7 +2215,7 @@ __webpack_require__.r(__webpack_exports__);
         vm.$emit('AfterCreate');
         $('#addUser').modal('hide');
         toast.fire('Success!', 'User Created in successfully.', 'success');
-      })["catch"](function () {
+      })["catch"](function (er) {
         toast.fire('Uops!', 'Complete all fields!', 'warning');
       });
     },
@@ -2304,7 +2313,7 @@ __webpack_require__.r(__webpack_exports__);
 
       _this3.users[index].name = res.data.name;
       _this3.users[index].email = res.data.email;
-      _this3.users[index].type_user = res.data.type_user;
+      _this3.users[index].role_id = res.data.role_id;
     });
   }
 });
@@ -59933,10 +59942,25 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "container" }, [
-    _vm._m(0),
+    _c("div", { staticClass: "row" }, [
+      _c("div", { staticClass: "col-md-12 mt-3" }, [
+        _c("div", { staticClass: "card card-widget widget-user" }, [
+          _vm._m(0),
+          _vm._v(" "),
+          _c("div", { staticClass: "widget-user-image" }, [
+            _c("img", {
+              staticClass: "img-circle",
+              attrs: { src: _vm.getProfilePhoto(), alt: "User Avatar" }
+            })
+          ]),
+          _vm._v(" "),
+          _vm._m(1)
+        ])
+      ])
+    ]),
     _vm._v(" "),
     _c("div", { staticClass: "card" }, [
-      _vm._m(1),
+      _vm._m(2),
       _vm._v(" "),
       _c("div", { staticClass: "card-body" }, [
         _c("div", { staticClass: "tab-content" }, [
@@ -60059,8 +60083,8 @@ var render = function() {
                         {
                           name: "model",
                           rawName: "v-model",
-                          value: _vm.form.type_user,
-                          expression: "form.type_user"
+                          value: _vm.form.role_id,
+                          expression: "form.role_id"
                         }
                       ],
                       staticClass: "form-control",
@@ -60069,13 +60093,13 @@ var render = function() {
                         placeholder: "Role",
                         disabled: ""
                       },
-                      domProps: { value: _vm.form.type_user },
+                      domProps: { value: _vm.form.role_id },
                       on: {
                         input: function($event) {
                           if ($event.target.composing) {
                             return
                           }
-                          _vm.$set(_vm.form, "type_user", $event.target.value)
+                          _vm.$set(_vm.form, "role_id", $event.target.value)
                         }
                       }
                     })
@@ -60136,72 +60160,53 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "row" }, [
-      _c("div", { staticClass: "col-md-12 mt-3" }, [
-        _c("div", { staticClass: "card card-widget widget-user" }, [
-          _c(
-            "div",
-            {
-              staticClass: "widget-user-header text-white",
-              staticStyle: {
-                background: "url('./img/profile.jpg') center center"
-              }
-            },
-            [
-              _c("h3", { staticClass: "widget-user-username text-right" }, [
-                _vm._v("Elizabeth Pierce")
-              ]),
-              _vm._v(" "),
-              _c("h5", { staticClass: "widget-user-desc text-right" }, [
-                _vm._v("Web Designer")
-              ])
-            ]
-          ),
-          _vm._v(" "),
-          _c("div", { staticClass: "widget-user-image" }, [
-            _c("img", {
-              staticClass: "img-circle",
-              attrs: { src: "", alt: "User Avatar" }
-            })
-          ]),
-          _vm._v(" "),
-          _c("div", { staticClass: "card-footer" }, [
-            _c("div", { staticClass: "row" }, [
-              _c("div", { staticClass: "col-sm-4 border-right" }, [
-                _c("div", { staticClass: "description-block" }, [
-                  _c("h5", { staticClass: "description-header" }, [
-                    _vm._v("3,200")
-                  ]),
-                  _vm._v(" "),
-                  _c("span", { staticClass: "description-text" }, [
-                    _vm._v("SALES")
-                  ])
-                ])
-              ]),
-              _vm._v(" "),
-              _c("div", { staticClass: "col-sm-4 border-right" }, [
-                _c("div", { staticClass: "description-block" }, [
-                  _c("h5", { staticClass: "description-header" }, [
-                    _vm._v("13,000")
-                  ]),
-                  _vm._v(" "),
-                  _c("span", { staticClass: "description-text" }, [
-                    _vm._v("FOLLOWERS")
-                  ])
-                ])
-              ]),
-              _vm._v(" "),
-              _c("div", { staticClass: "col-sm-4" }, [
-                _c("div", { staticClass: "description-block" }, [
-                  _c("h5", { staticClass: "description-header" }, [
-                    _vm._v("35")
-                  ]),
-                  _vm._v(" "),
-                  _c("span", { staticClass: "description-text" }, [
-                    _vm._v("PRODUCTS")
-                  ])
-                ])
-              ])
+    return _c(
+      "div",
+      {
+        staticClass: "widget-user-header text-white",
+        staticStyle: { background: "url('./img/profile.jpg') center center" }
+      },
+      [
+        _c("h3", { staticClass: "widget-user-username text-right" }, [
+          _vm._v("Elizabeth Pierce")
+        ]),
+        _vm._v(" "),
+        _c("h5", { staticClass: "widget-user-desc text-right" }, [
+          _vm._v("Web Designer")
+        ])
+      ]
+    )
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "card-footer" }, [
+      _c("div", { staticClass: "row" }, [
+        _c("div", { staticClass: "col-sm-4 border-right" }, [
+          _c("div", { staticClass: "description-block" }, [
+            _c("h5", { staticClass: "description-header" }, [_vm._v("3,200")]),
+            _vm._v(" "),
+            _c("span", { staticClass: "description-text" }, [_vm._v("SALES")])
+          ])
+        ]),
+        _vm._v(" "),
+        _c("div", { staticClass: "col-sm-4 border-right" }, [
+          _c("div", { staticClass: "description-block" }, [
+            _c("h5", { staticClass: "description-header" }, [_vm._v("13,000")]),
+            _vm._v(" "),
+            _c("span", { staticClass: "description-text" }, [
+              _vm._v("FOLLOWERS")
+            ])
+          ])
+        ]),
+        _vm._v(" "),
+        _c("div", { staticClass: "col-sm-4" }, [
+          _c("div", { staticClass: "description-block" }, [
+            _c("h5", { staticClass: "description-header" }, [_vm._v("35")]),
+            _vm._v(" "),
+            _c("span", { staticClass: "description-text" }, [
+              _vm._v("PRODUCTS")
             ])
           ])
         ])
@@ -60294,7 +60299,7 @@ var render = function() {
                       _c("td", [_vm._v(_vm._s(user.email))]),
                       _vm._v(" "),
                       _c("td", [
-                        _vm._v(_vm._s(_vm._f("upText")(user.type_user)))
+                        _vm._v(_vm._s(_vm._f("upText")(user.roles.description)))
                       ]),
                       _vm._v(" "),
                       _c("td", [
@@ -60553,15 +60558,15 @@ var render = function() {
                               {
                                 name: "model",
                                 rawName: "v-model",
-                                value: _vm.form.type_user,
-                                expression: "form.type_user"
+                                value: _vm.form.role_id,
+                                expression: "form.role_id"
                               }
                             ],
                             staticClass: "form-control",
                             class: {
-                              "is-invalid": _vm.form.errors.has("type_user")
+                              "is-invalid": _vm.form.errors.has("role_id")
                             },
-                            attrs: { name: "type_user", id: "type_user" },
+                            attrs: { name: "role_id", id: "role_id" },
                             on: {
                               change: function($event) {
                                 var $$selectedVal = Array.prototype.filter
@@ -60574,7 +60579,7 @@ var render = function() {
                                   })
                                 _vm.$set(
                                   _vm.form,
-                                  "type_user",
+                                  "role_id",
                                   $event.target.multiple
                                     ? $$selectedVal
                                     : $$selectedVal[0]
@@ -60587,22 +60592,22 @@ var render = function() {
                               _vm._v("Select User Role")
                             ]),
                             _vm._v(" "),
-                            _c("option", { attrs: { value: "admin" } }, [
+                            _c("option", { attrs: { value: "1" } }, [
                               _vm._v("Admin")
                             ]),
                             _vm._v(" "),
-                            _c("option", { attrs: { value: "user" } }, [
+                            _c("option", { attrs: { value: "2" } }, [
                               _vm._v("Standard User")
                             ]),
                             _vm._v(" "),
-                            _c("option", { attrs: { value: "author" } }, [
+                            _c("option", { attrs: { value: "3" } }, [
                               _vm._v("Author")
                             ])
                           ]
                         ),
                         _vm._v(" "),
                         _c("has-error", {
-                          attrs: { form: _vm.form, field: "type_user" }
+                          attrs: { form: _vm.form, field: "role_id" }
                         })
                       ],
                       1
