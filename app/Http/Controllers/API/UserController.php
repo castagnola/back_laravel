@@ -15,6 +15,7 @@ class UserController extends Controller
     public function __construct()
     {
         $this->middleware('auth:api');
+
     }
 
     /**
@@ -24,6 +25,7 @@ class UserController extends Controller
      */
     public function index()
     {
+        $this->authorize('isAdmin');
         return User::with('roles')->latest()->paginate(5);
     }
 
@@ -35,12 +37,13 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
+        $this->authorize('isAdmin');
+
         $this->validate($request, [
             'name' => 'required|string|max:191',
             'email' => 'required|string|email|max:191|unique:users',
             'password' => 'required|string|min:6',
             'role_id' => 'required'
-
         ]);
 
         $user = new User();
@@ -87,7 +90,7 @@ class UserController extends Controller
             \Image::make($request->photo)->save(public_path('img/profile/') . $name);
 
             //verifica si el archivo ya existe y lo remplaza
-            $userPhoto = public_path('img/profile/').$currentPhoto;
+            $userPhoto = public_path('img/profile/') . $currentPhoto;
             file_exists($userPhoto) ? @unlink($userPhoto) : null;
 
 
@@ -107,6 +110,7 @@ class UserController extends Controller
     public function update(Request $request, $id)
     {
         $user = User::find($id);
+
         $this->validate($request, [
             'name' => 'required|string|max:191',
             'email' => 'required|string|email|max:191|unique:users,email,' . $user->id,
@@ -117,13 +121,12 @@ class UserController extends Controller
         $user->update([
             'name' => $request->name,
             'email' => $request->email,
-            'photo' => empty($request['photo']) ? 'user.png' : $request->photo,
-            'password' => Hash::make($request['password']),
+            'password' => empty($request->password) ? $user->password : Hash::make($request->password),
         ]);
-
         $user->role_id = $request->role_id;
         $user->save();
-        return $user;
+
+        return User::with('roles')->find($id);
     }
 
     /**

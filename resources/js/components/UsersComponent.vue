@@ -6,7 +6,8 @@
                     <div class="card-header">
                         <h3 class="card-title">User List</h3>
                         <div class="card-tools">
-                            <button type="button" class="btn btn-block btn-outline-success" @click="newModal()">Add new
+                            <button v-if="$gate.isAdmin()"  type="button" class="btn btn-block btn-outline-success" v-on:click="newModal()">Add
+                                new
                                 <i class="fas fa-user-plus"></i>
                             </button>
                         </div>
@@ -19,7 +20,7 @@
                                 <th>ID</th>
                                 <th>Name</th>
                                 <th>Email</th>
-                                <th>Type</th>
+                                <th>Role</th>
                                 <th>Status</th>
                                 <th>Date Created</th>
                                 <th>Action</th>
@@ -36,11 +37,12 @@
                                 <td>{{user.created_at | myDate}}</td>
 
                                 <td>
-                                    <button type="button" class="btn btn-primary btn-sm" @click="editModal(user)">
+                                    <button type="button" class="btn btn-primary btn-sm" v-on:click="editModal(user)">
                                         <i class="fa fa-edit blue"></i>
                                     </button>
 
-                                    <button type="button" class="btn btn-danger btn-sm" @click="deleteUser(user.id)">
+                                    <button type="button" class="btn btn-danger btn-sm"
+                                            v-on:click="deleteUser(user.id)">
                                         <i class="fa fa-trash red"></i>
                                     </button>
 
@@ -94,10 +96,10 @@
                             <div class="form-group">
                                 <select name="role_id" v-model="form.role_id" id="role_id" class="form-control"
                                         :class="{ 'is-invalid': form.errors.has('role_id') }">
-                                    <option value="">Select User Role</option>
-                                    <option value="1">Admin</option>
-                                    <option value="2">Standard User</option>
-                                    <option value="3">Author</option>
+                                    <option value="" disabled selected>Select User Role</option>
+                                    <option v-for="(role,key) in roles" :value="role.id">
+                                        {{role.description}}
+                                    </option>
                                 </select>
                                 <has-error :form="form" field="role_id"></has-error>
                             </div>
@@ -125,31 +127,32 @@
             return {
                 editmode: false,
                 users: [],
+                roles: [],
                 form: new Form({
                     id: '',
                     name: '',
                     email: '',
                     password: '',
                     role_id: '',
+                    roles: '',
                     photo: ''
                 })
             }
         },
         methods: {
             /**
-             *
+             *Create user
              */
             createUser() {
                 this.editmode = false;
                 this.form.post('api/user')
                     .then(() => {
-                        vm.$emit('AfterCreate');
+                        vm.$emit('afterCreate');
                         $('#addUser').modal('hide')
                         toast.fire('Success!', 'User Created in successfully.', 'success');
                     })
-                    .catch((er) => {
-
-                        toast.fire('Uops!', 'Complete all fields!', 'warning')
+                    .catch(() => {
+                        toast.fire('Uops!', 'Complete all fields!', 'warning');
                     })
             },
 
@@ -177,7 +180,6 @@
             deleteUser(id) {
                 swal.fire({
                     title: 'Are you sure?',
-                    type: 'warning',
                     showCancelButton: true,
                     confirmButtonColor: '#3085d6',
                     cancelButtonColor: '#d33',
@@ -186,11 +188,10 @@
                     // Send request to the server
                     if (result.value) {
                         this.form.delete('api/user/' + id).then(() => {
-                            toast.fire('Success!', 'User has been deleted.', 'success'
-                            );
-                            vm.$emit('AfterCreate');
+                            toast.fire('Success!', 'User has been deleted.', 'success');
+                            vm.$emit('afterCreate');
                         }).catch(() => {
-                            toast.fire('Error!', 'There was something wronge.', 'error')
+                            toast.fire('Error!', 'There was something wronge.', 'error');
                         });
                     }
                 })
@@ -203,6 +204,7 @@
             editModal(user) {
                 this.editmode = true;
                 this.form.reset();
+                this.form.clear();
                 $('#addUser').modal('show');
                 this.form.fill(user);
             },
@@ -213,16 +215,27 @@
             newModal() {
                 this.editmode = false;
                 this.form.reset();
+                this.form.clear();
                 $('#addUser').modal('show');
             },
 
             /**
-             * Show all users
+             * Show all Users
              */
             loadUsers() {
                 axios.get("api/user").then(({data}) => (this.users = data.data));
 
             },
+
+            /**
+             * Show all Roles
+             */
+            loadRoles() {
+                axios.get(`api/get-roles`)
+                    .then((res) => {
+                        this.roles = res.data
+                    })
+            }
         },
 
         /**
@@ -230,8 +243,8 @@
          */
         created() {
             this.loadUsers();
-
-            vm.$on('AfterCreate', () => {
+            this.loadRoles();
+            vm.$on('afterCreate', () => {
                 this.loadUsers();
             });
             //event
@@ -239,7 +252,7 @@
                 const index = this.users.findIndex(itemSearch => itemSearch.id === res.data.id)
                 this.users[index].name = res.data.name;
                 this.users[index].email = res.data.email;
-                this.users[index].role_id = res.data.role_id;
+                this.users[index].roles.description = res.data.roles.description
             })
         }
     }

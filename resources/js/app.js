@@ -10,21 +10,23 @@ window.Vue = require('vue');
 /**
  * Imports
  */
-import { Form, HasError, AlertError } from 'vform'
-import VueRouter from 'vue-router'
-import swal from 'sweetalert2'
+import { Form, HasError, AlertError } from 'vform';
+import VueRouter from 'vue-router';
+import Gate from "./Gate/gate";
+import swal from 'sweetalert2';
 import moment from 'moment';
 import Vue from 'vue'
 
+/**
+ * Globals uses
+ */
+
+Vue.component(AlertError.name, AlertError)
+Vue.component(HasError.name, HasError)
+Vue.use(VueRouter)
+Vue.prototype.$gate = new Gate(window.user);
 
 window.swal = swal;
-
-Vue.use(VueRouter)
-Vue.component(HasError.name, HasError)
-Vue.component(AlertError.name, AlertError)
-
-// Vue.component('example-component', require('./components/ExampleComponent.vue').default);
-
 const toast = swal.mixin({
     toast: true,
     position: 'top-end',
@@ -61,6 +63,9 @@ const router = new VueRouter({
 
     routes // short for `routes: routes`
 })
+
+// Vue.component('example-component', require('./components/ExampleComponent.vue').default);
+
 
 /**
  * Render app

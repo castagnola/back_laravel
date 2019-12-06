@@ -2190,32 +2190,36 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
       editmode: false,
       users: [],
+      roles: [],
       form: new Form({
         id: '',
         name: '',
         email: '',
         password: '',
         role_id: '',
+        roles: '',
         photo: ''
       })
     };
   },
   methods: {
     /**
-     *
+     *Create user
      */
     createUser: function createUser() {
       this.editmode = false;
       this.form.post('api/user').then(function () {
-        vm.$emit('AfterCreate');
+        vm.$emit('afterCreate');
         $('#addUser').modal('hide');
         toast.fire('Success!', 'User Created in successfully.', 'success');
-      })["catch"](function (er) {
+      })["catch"](function () {
         toast.fire('Uops!', 'Complete all fields!', 'warning');
       });
     },
@@ -2244,7 +2248,6 @@ __webpack_require__.r(__webpack_exports__);
 
       swal.fire({
         title: 'Are you sure?',
-        type: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
         cancelButtonColor: '#d33',
@@ -2254,7 +2257,7 @@ __webpack_require__.r(__webpack_exports__);
         if (result.value) {
           _this.form["delete"]('api/user/' + id).then(function () {
             toast.fire('Success!', 'User has been deleted.', 'success');
-            vm.$emit('AfterCreate');
+            vm.$emit('afterCreate');
           })["catch"](function () {
             toast.fire('Error!', 'There was something wronge.', 'error');
           });
@@ -2269,6 +2272,7 @@ __webpack_require__.r(__webpack_exports__);
     editModal: function editModal(user) {
       this.editmode = true;
       this.form.reset();
+      this.form.clear();
       $('#addUser').modal('show');
       this.form.fill(user);
     },
@@ -2279,11 +2283,12 @@ __webpack_require__.r(__webpack_exports__);
     newModal: function newModal() {
       this.editmode = false;
       this.form.reset();
+      this.form.clear();
       $('#addUser').modal('show');
     },
 
     /**
-     * Show all users
+     * Show all Users
      */
     loadUsers: function loadUsers() {
       var _this2 = this;
@@ -2292,6 +2297,17 @@ __webpack_require__.r(__webpack_exports__);
         var data = _ref.data;
         return _this2.users = data.data;
       });
+    },
+
+    /**
+     * Show all Roles
+     */
+    loadRoles: function loadRoles() {
+      var _this3 = this;
+
+      axios.get("api/get-roles").then(function (res) {
+        _this3.roles = res.data;
+      });
     }
   },
 
@@ -2299,21 +2315,22 @@ __webpack_require__.r(__webpack_exports__);
    * Methods first charge
    */
   created: function created() {
-    var _this3 = this;
+    var _this4 = this;
 
     this.loadUsers();
-    vm.$on('AfterCreate', function () {
-      _this3.loadUsers();
+    this.loadRoles();
+    vm.$on('afterCreate', function () {
+      _this4.loadUsers();
     }); //event
 
     vm.$on('afterUpdate', function (res) {
-      var index = _this3.users.findIndex(function (itemSearch) {
+      var index = _this4.users.findIndex(function (itemSearch) {
         return itemSearch.id === res.data.id;
       });
 
-      _this3.users[index].name = res.data.name;
-      _this3.users[index].email = res.data.email;
-      _this3.users[index].role_id = res.data.role_id;
+      _this4.users[index].name = res.data.name;
+      _this4.users[index].email = res.data.email;
+      _this4.users[index].roles.description = res.data.roles.description;
     });
   }
 });
@@ -60265,22 +60282,26 @@ var render = function() {
               _c("h3", { staticClass: "card-title" }, [_vm._v("User List")]),
               _vm._v(" "),
               _c("div", { staticClass: "card-tools" }, [
-                _c(
-                  "button",
-                  {
-                    staticClass: "btn btn-block btn-outline-success",
-                    attrs: { type: "button" },
-                    on: {
-                      click: function($event) {
-                        return _vm.newModal()
-                      }
-                    }
-                  },
-                  [
-                    _vm._v("Add new\n                            "),
-                    _c("i", { staticClass: "fas fa-user-plus" })
-                  ]
-                )
+                _vm.$gate.isAdmin()
+                  ? _c(
+                      "button",
+                      {
+                        staticClass: "btn btn-block btn-outline-success",
+                        attrs: { type: "button" },
+                        on: {
+                          click: function($event) {
+                            return _vm.newModal()
+                          }
+                        }
+                      },
+                      [
+                        _vm._v(
+                          "Add\n                            new\n                            "
+                        ),
+                        _c("i", { staticClass: "fas fa-user-plus" })
+                      ]
+                    )
+                  : _vm._e()
               ])
             ]),
             _vm._v(" "),
@@ -60588,22 +60609,29 @@ var render = function() {
                             }
                           },
                           [
-                            _c("option", { attrs: { value: "" } }, [
-                              _vm._v("Select User Role")
-                            ]),
+                            _c(
+                              "option",
+                              {
+                                attrs: { value: "", disabled: "", selected: "" }
+                              },
+                              [_vm._v("Select User Role")]
+                            ),
                             _vm._v(" "),
-                            _c("option", { attrs: { value: "1" } }, [
-                              _vm._v("Admin")
-                            ]),
-                            _vm._v(" "),
-                            _c("option", { attrs: { value: "2" } }, [
-                              _vm._v("Standard User")
-                            ]),
-                            _vm._v(" "),
-                            _c("option", { attrs: { value: "3" } }, [
-                              _vm._v("Author")
-                            ])
-                          ]
+                            _vm._l(_vm.roles, function(role, key) {
+                              return _c(
+                                "option",
+                                { domProps: { value: role.id } },
+                                [
+                                  _vm._v(
+                                    "\n                                    " +
+                                      _vm._s(role.description) +
+                                      "\n                                "
+                                  )
+                                ]
+                              )
+                            })
+                          ],
+                          2
                         ),
                         _vm._v(" "),
                         _c("has-error", {
@@ -60679,7 +60707,7 @@ var staticRenderFns = [
         _vm._v(" "),
         _c("th", [_vm._v("Email")]),
         _vm._v(" "),
-        _c("th", [_vm._v("Type")]),
+        _c("th", [_vm._v("Role")]),
         _vm._v(" "),
         _c("th", [_vm._v("Status")]),
         _vm._v(" "),
@@ -75781,6 +75809,50 @@ module.exports = function(module) {
 
 /***/ }),
 
+/***/ "./resources/js/Gate/gate.js":
+/*!***********************************!*\
+  !*** ./resources/js/Gate/gate.js ***!
+  \***********************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Gate; });
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var Gate =
+/*#__PURE__*/
+function () {
+  function Gate(user) {
+    _classCallCheck(this, Gate);
+
+    this.user = user;
+  }
+
+  _createClass(Gate, [{
+    key: "isAdmin",
+    value: function isAdmin() {
+      return this.user.role_id === 1;
+    }
+  }, {
+    key: "isUser",
+    value: function isUser() {
+      return this.user.role_id === 2;
+    }
+  }]);
+
+  return Gate;
+}();
+
+
+
+/***/ }),
+
 /***/ "./resources/js/app.js":
 /*!*****************************!*\
   !*** ./resources/js/app.js ***!
@@ -75793,12 +75865,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vform__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vform */ "./node_modules/vform/dist/vform.common.js");
 /* harmony import */ var vform__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(vform__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var vue_router__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vue-router */ "./node_modules/vue-router/dist/vue-router.esm.js");
-/* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! sweetalert2 */ "./node_modules/sweetalert2/dist/sweetalert2.all.js");
-/* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(sweetalert2__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! moment */ "./node_modules/moment/moment.js");
-/* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(moment__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.common.js");
-/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(vue__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _Gate_gate__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Gate/gate */ "./resources/js/Gate/gate.js");
+/* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! sweetalert2 */ "./node_modules/sweetalert2/dist/sweetalert2.all.js");
+/* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(sweetalert2__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! moment */ "./node_modules/moment/moment.js");
+/* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(moment__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.common.js");
+/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(vue__WEBPACK_IMPORTED_MODULE_5__);
 /**
  * First we will load all of this project's JavaScript dependencies which
  * includes Vue and other libraries. It is a great starting point when
@@ -75816,12 +75889,17 @@ window.Vue = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.common.
 
 
 
-window.swal = sweetalert2__WEBPACK_IMPORTED_MODULE_2___default.a;
-vue__WEBPACK_IMPORTED_MODULE_4___default.a.use(vue_router__WEBPACK_IMPORTED_MODULE_1__["default"]);
-vue__WEBPACK_IMPORTED_MODULE_4___default.a.component(vform__WEBPACK_IMPORTED_MODULE_0__["HasError"].name, vform__WEBPACK_IMPORTED_MODULE_0__["HasError"]);
-vue__WEBPACK_IMPORTED_MODULE_4___default.a.component(vform__WEBPACK_IMPORTED_MODULE_0__["AlertError"].name, vform__WEBPACK_IMPORTED_MODULE_0__["AlertError"]); // Vue.component('example-component', require('./components/ExampleComponent.vue').default);
 
-var toast = sweetalert2__WEBPACK_IMPORTED_MODULE_2___default.a.mixin({
+/**
+ * Globals uses
+ */
+
+vue__WEBPACK_IMPORTED_MODULE_5___default.a.component(vform__WEBPACK_IMPORTED_MODULE_0__["AlertError"].name, vform__WEBPACK_IMPORTED_MODULE_0__["AlertError"]);
+vue__WEBPACK_IMPORTED_MODULE_5___default.a.component(vform__WEBPACK_IMPORTED_MODULE_0__["HasError"].name, vform__WEBPACK_IMPORTED_MODULE_0__["HasError"]);
+vue__WEBPACK_IMPORTED_MODULE_5___default.a.use(vue_router__WEBPACK_IMPORTED_MODULE_1__["default"]);
+vue__WEBPACK_IMPORTED_MODULE_5___default.a.prototype.$gate = new _Gate_gate__WEBPACK_IMPORTED_MODULE_2__["default"](window.user);
+window.swal = sweetalert2__WEBPACK_IMPORTED_MODULE_3___default.a;
+var toast = sweetalert2__WEBPACK_IMPORTED_MODULE_3___default.a.mixin({
   toast: true,
   position: 'top-end',
   showConfirmButton: false,
@@ -75829,13 +75907,13 @@ var toast = sweetalert2__WEBPACK_IMPORTED_MODULE_2___default.a.mixin({
   timerProgressBar: true
 });
 window.toast = toast;
-window.vm = new vue__WEBPACK_IMPORTED_MODULE_4___default.a();
+window.vm = new vue__WEBPACK_IMPORTED_MODULE_5___default.a();
 window.Form = vform__WEBPACK_IMPORTED_MODULE_0__["Form"];
-vue__WEBPACK_IMPORTED_MODULE_4___default.a.filter('upText', function (text) {
+vue__WEBPACK_IMPORTED_MODULE_5___default.a.filter('upText', function (text) {
   return text.charAt(0).toUpperCase() + text.slice(1);
 });
-vue__WEBPACK_IMPORTED_MODULE_4___default.a.filter('myDate', function (created) {
-  return moment__WEBPACK_IMPORTED_MODULE_3___default()(created).format('MMMM Do YYYY');
+vue__WEBPACK_IMPORTED_MODULE_5___default.a.filter('myDate', function (created) {
+  return moment__WEBPACK_IMPORTED_MODULE_4___default()(created).format('MMMM Do YYYY');
 });
 /**
  * Routes
@@ -75858,13 +75936,14 @@ var routes = [{
 var router = new vue_router__WEBPACK_IMPORTED_MODULE_1__["default"]({
   routes: routes // short for `routes: routes`
 
-});
+}); // Vue.component('example-component', require('./components/ExampleComponent.vue').default);
+
 /**
  * Render app
  * @type {Vue | CombinedVueInstance<Vue, object, object, object, Record<never, any>>}
  */
 
-var app = new vue__WEBPACK_IMPORTED_MODULE_4___default.a({
+var app = new vue__WEBPACK_IMPORTED_MODULE_5___default.a({
   el: '#app',
   router: router
 });
