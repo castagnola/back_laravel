@@ -28,14 +28,12 @@
                             </thead>
                             <tbody>
                             <tr v-for="user in users" :key="user.id">
-
                                 <td>{{user.id}}</td>
                                 <td>{{user.name}}</td>
                                 <td>{{user.email}}</td>
                                 <td>{{user.roles.description | upText}}</td>
                                 <td>{{user.status == 1 ? 'Activo' : 'Desactivo'}}</td>
                                 <td>{{user.created_at | myDate}}</td>
-
                                 <td>
                                     <button type="button" class="btn btn-primary btn-sm" v-on:click="editModal(user)">
                                         <i class="fa fa-edit blue"></i>
@@ -45,7 +43,6 @@
                                             v-on:click="deleteUser(user.id)">
                                         <i class="fa fa-trash red"></i>
                                     </button>
-
                                 </td>
                             </tr>
                             </tbody>

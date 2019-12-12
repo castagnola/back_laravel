@@ -21,12 +21,13 @@ import Vue from 'vue'
  * Globals uses
  */
 
-Vue.component(AlertError.name, AlertError)
-Vue.component(HasError.name, HasError)
-Vue.use(VueRouter)
+Vue.component(AlertError.name, AlertError);
+Vue.component(HasError.name, HasError);
+Vue.use(VueRouter);
 Vue.prototype.$gate = new Gate(window.user);
 
 window.swal = swal;
+
 const toast = swal.mixin({
     toast: true,
     position: 'top-end',
