@@ -17,6 +17,14 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 /**
+ * OAuth Routes
+ */
+Route::post('/login','OAuth\AuthController@login');
+Route::post('/register','OAuth\AuthController@login');
+Route::get('/redirecTo','OAuth\AuthController@redirecTo');
+Route::middleware('auth:api')->post('/logout','OAuth\AuthController@logout');
+
+/**
  * API Routes
  */
 
